@@ -29,7 +29,7 @@ class VideoItemModel {
     }
     
     func getEpisode(_ index: Int, forSeason seasonIndex: Int) -> Episodes? {
-        return item.videos?[index] ?? item.seasons?[seasonIndex].episodes?[index]
+        return item.videos?[index] ?? item.seasons?[seasonIndex].episodes[index]
     }
     
     func loadItemsInfo() {
@@ -49,12 +49,12 @@ class VideoItemModel {
     
     func checkDefaults() {
         if Config.shared.canSortSeasons, let seasons = item.seasons {
-            item.seasons = seasons.sorted { $0.number! > $1.number! }
+            item.seasons = seasons.sorted { $0.number > $1.number }
         }
         if Config.shared.canSortEpisodes, let seasons = item.seasons {
             var _seasons = [Seasons]()
             for season in seasons {
-                season.episodes = season.episodes?.sorted { $0.number! > $1.number! }
+                season.episodes = season.episodes.sorted { $0.number! > $1.number! }
                 _seasons.append(season)
             }
             item.seasons = seasons
@@ -126,10 +126,9 @@ class VideoItemModel {
             var foundSeason = false
             guard let seasons = item.seasons else { return }
             for season in seasons {
-                if season.watching?.status == Status.watching || season.watching?.status == Status.unwatched {
+                if season.watching.status == Status.watching || season.watching.status == Status.unwatched {
                     foundSeason = true
-                    guard let episodes = season.episodes else { return }
-                    for episode in episodes {
+                    for episode in season.episodes {
                         if episode.watching?.status == Status.watching {
                             mediaItem.watchingTime = episode.watching?.time ?? 0
                         }
@@ -140,7 +139,7 @@ class VideoItemModel {
                                     title = "Episode \(number)"
                                 }
                                 mediaItem.video = number
-                                mediaItem.title = "s\(season.number ?? 0)e\(number) - \(title)"
+                                mediaItem.title = "s\(season.number )e\(number) - \(title)"
                             }
                             mediaItem.season = season.number
                             mediaItem.url = URL(string: url)

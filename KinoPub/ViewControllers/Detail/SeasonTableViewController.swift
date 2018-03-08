@@ -139,7 +139,7 @@ class SeasonTableViewController: UITableViewController {
             }
             actionVC.setPresentingSource(self.tableView.cellForRow(at: indexPath!)!)
         } else if season {
-            for (index, file) in (self.model.getSeason(indexPathSeason)?.episodes?.first?.files?.enumerated())! {
+            for (index, file) in (self.model.getSeason(indexPathSeason)?.episodes.first?.files?.enumerated())! {
                 actionVC.addAction(file.quality!, style: .default, handler: { (action) in
                     self.downloadSeason(index: index, quality: file.quality!)
                 })
@@ -169,7 +169,7 @@ class SeasonTableViewController: UITableViewController {
         if model.item?.videos != nil {
             return model.item.videos?.count ?? 0
         }
-        return model.getSeason(indexPathSeason)?.episodes?.count ?? 0
+        return model.getSeason(indexPathSeason)?.episodes.count ?? 0
     }
 
     
@@ -183,7 +183,7 @@ class SeasonTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let watchAction = UITableViewRowAction(style: .default, title: "Отметить") { [weak self] (_, indexPath) in
             guard let strongSelf = self else { return }
-            let video = strongSelf.model.getSeason(strongSelf.indexPathSeason)?.episodes?[indexPath.row].number ?? strongSelf.model.item?.videos?[indexPath.row].number
+            let video = strongSelf.model.getSeason(strongSelf.indexPathSeason)?.episodes[indexPath.row].number ?? strongSelf.model.item?.videos?[indexPath.row].number
             strongSelf.logViewsManager.changeWatchingStatus(id: (strongSelf.model.item?.id)!, video: video, season: strongSelf.model.getSeason(strongSelf.indexPathSeason)?.number ?? 0, status: nil)
         }
         

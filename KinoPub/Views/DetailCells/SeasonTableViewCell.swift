@@ -58,7 +58,7 @@ extension SeasonTableViewCell: UICollectionViewDelegate, UICollectionViewDataSou
         if model.item?.videos != nil {
             return model.item.videos?.count ?? 0
         }
-        return model.getSeason(indexPathSeason)?.episodes?.count ?? 0
+        return model.getSeason(indexPathSeason)?.episodes.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

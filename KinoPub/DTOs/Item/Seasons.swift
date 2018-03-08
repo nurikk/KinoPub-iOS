@@ -1,7 +1,7 @@
 import Foundation
 import ObjectMapper
 
-public class Seasons: Mappable {
+public class Seasons: ImmutableMappable {
     
     // MARK: Declaration for string constants to be used to decode and also serialize.
     private struct SerializationKeys {
@@ -12,21 +12,15 @@ public class Seasons: Mappable {
     }
     
     // MARK: Properties
-    public var episodes: [Episodes]!
-    public var number: Int!
-    public var title: String!
-    public var watching: Watching!
+    public let number: Int
+    public let title: String
+    public let watching: Watching
+    public var episodes: [Episodes]
     
-    
-    public required init?(map: Map) {
-        
-    }
-    
-    
-    public func mapping(map: Map) {
-        episodes <- map[SerializationKeys.episodes]
-        number <- map[SerializationKeys.number]
-        title <- map[SerializationKeys.title]
-        watching <- map[SerializationKeys.watching]
+    public required init(map: Map) throws {
+        number = try map.value(SerializationKeys.number)
+        title = try map.value(SerializationKeys.title)
+        watching = try map.value(SerializationKeys.watching)
+        episodes = try map.value(SerializationKeys.episodes)
     }
 }

@@ -410,7 +410,7 @@ extension DetailViewController {
         let actionVC = ActionSheet(message: "Выберите качество").tint(.kpBlack)
         
         if let season = season {
-            for (index, file) in (model.getSeason(season)?.episodes?.first?.files?.enumerated())! {
+            for (index, file) in (model.getSeason(season)?.episodes.first?.files?.enumerated())! {
                 actionVC.addAction(file.quality!, style: .default, handler: { [weak self] (action) in
                     guard let strongSelf = self else { return }
                     strongSelf.downloadSeason(season: season, index: index, quality: file.quality!)
