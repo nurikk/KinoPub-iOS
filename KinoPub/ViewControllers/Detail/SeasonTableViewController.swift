@@ -118,7 +118,7 @@ class SeasonTableViewController: UITableViewController {
     
     func downloadSeason(index: Int, quality: String) {
         for episode in (model.getSeason(indexPathSeason)?.episodes)! {
-            let name = (self.model.item?.title?.replacingOccurrences(of: "/ ", with: "("))! + ") (s\(self.model.getSeason(indexPathSeason)?.number ?? 0)e\(episode.number ?? 0))"  + " (\(quality)).mp4"
+            let name = (self.model.item?.title?.replacingOccurrences(of: " /", with: ";"))! + "; Сезон \(self.model.getSeason(indexPathSeason)?.number ?? 0), Эпизод \(episode.number ?? 0)."  + "\(quality).mp4"
             let poster = self.model.item?.posters?.small
             let url = episode.files?[index].url?.http
             NTDownloadManager.shared.addDownloadTask(urlString: url!, fileName: name, fileImage: poster)
