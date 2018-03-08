@@ -36,6 +36,7 @@ target 'KinoPub' do
   pod 'EasyAbout'
   pod 'CircleProgressView'
   
+  pod 'Reveal-SDK', :configurations => ['Debug']
   pod 'R.swift'
   pod 'Mixpanel'
   pod 'SwiftyBeaver', :configurations => ['Debug']
