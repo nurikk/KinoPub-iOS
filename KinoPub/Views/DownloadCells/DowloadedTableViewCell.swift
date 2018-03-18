@@ -15,32 +15,47 @@ class DowloadedTableViewCell: UITableViewCell {
     
     var fileInfo: NTDownloadTask? {
         didSet {
-            let title = fileInfo?.fileName.replacingOccurrences(of: ".mp4", with: "").components(separatedBy: "; ")
-            nameLabel.text = title?[0]
-            if title!.count > 1, title!.count > 2 {
-                enNameLabel.text = title?[1]
+            guard let title = fileInfo?.fileName.replacingOccurrences(of: ".mp4", with: "").components(separatedBy: "; ") else {
+                posterImageView.image = nil
+                nameLabel.text = nil
+                progressLabel.text = nil
+                qualityLabel = nil
+                enNameLabel.text = nil
+                seasonLabel.text = nil
+                return
+            }
+
+            nameLabel.text = title[0]
+            if title.count > 2 {
+                enNameLabel.text = title[1]
                 enNameLabel.isHidden = false
-                let info = title![2].components(separatedBy: ".")
+                let info = title[2].components(separatedBy: ".")
                 if info.count > 1 {
                     seasonLabel.text = info[0]
                     seasonLabel.isHidden = false
                     qualityLabel.text = "  " + info[1] + "  "
                     qualityLabel.isHidden = false
                 } else {
+                    seasonLabel.text = nil
                     qualityLabel.text = "  " + info[0] + "  "
                     qualityLabel.isHidden = false
                 }
-            } else if title!.count > 1, title!.count < 3 {
-                let info = title![1].components(separatedBy: ".")
+            } else if title.count == 2 {
+                enNameLabel.text = nil
+                let info = title[1].components(separatedBy: ".")
                 if info.count > 1 {
                     seasonLabel.text = info[0]
                     seasonLabel.isHidden = false
                     qualityLabel.text = "  " + info[1] + "  "
                     qualityLabel.isHidden = false
                 } else {
+                    seasonLabel.text = nil
                     qualityLabel.text = "  " + info[0] + "  "
                     qualityLabel.isHidden = false
                 }
+            } else {
+                seasonLabel.text = nil
+                enNameLabel.text = nil
             }
             
             posterImageView.af_setImage(withURL: URL(string: (fileInfo?.fileImage)!)!,

@@ -17,51 +17,66 @@ class DownloadingTableViewCell: UITableViewCell {
     
     var fileInfo: NTDownloadTask? {
         didSet {
-            let title = fileInfo?.fileName.replacingOccurrences(of: ".mp4", with: "").components(separatedBy: "; ")
-            nameLabel.text = title?[0]
-            if title!.count > 1, title!.count > 2 {
-                enNameLabel.text = title?[1]
-                enNameLabel.isHidden = false
-                let info = title![2].components(separatedBy: ".")
-                if info.count > 1 {
-                    seasonLabel.text = info[0]
-                    seasonLabel.isHidden = false
-                    qualityLabel.text = "  " + info[1] + "  "
-                    qualityLabel.isHidden = false
-                } else {
-                    qualityLabel.text = "  " + info[0] + "  "
-                    qualityLabel.isHidden = false
-                }
-            } else if title!.count > 1, title!.count < 3 {
-                let info = title![1].components(separatedBy: ".")
-                if info.count > 1 {
-                    seasonLabel.text = info[0]
-                    seasonLabel.isHidden = false
-                    qualityLabel.text = "  " + info[1] + "  "
-                    qualityLabel.isHidden = false
-                } else {
-                    qualityLabel.text = "  " + info[0] + "  "
-                    qualityLabel.isHidden = false
-                }
-            }
-            
-            progressView.progress = Double((fileInfo?.progress)!)
-            
-            posterImageView.af_setImage(withURL: URL(string: (fileInfo?.fileImage)!)!,
-                                       placeholderImage: UIImage(named: "poster-placeholder.png"),
-                                       imageTransition: .crossDissolve(0.2),
-                                       runImageTransitionIfCached: false)
-
-            guard let downloadedFileSize = fileInfo?.downloadedFileSize, let fileSize = fileInfo?.fileSize else {
-                return
-            }
-
-            let downSize = downloadedFileSize.unit == "GB" ? "%.2f" : "%.0f"
-            let size = fileSize.unit == "GB" ? "%.2f" : "%.0f"
-            progressLabel.text = String(format: "  \(downSize) %@ / \(size) %@  ", downloadedFileSize.size, downloadedFileSize.unit, fileSize.size, fileSize.unit)
-            
-            changeIcon()
+            updateUI()
         }
+    }
+    
+    private func updateUI() {
+        guard let title = fileInfo?.fileName.replacingOccurrences(of: ".mp4", with: "").components(separatedBy: "; ") else {
+            nameLabel.text = nil
+            enNameLabel.text = nil
+            seasonLabel.text = nil
+            qualityLabel = nil
+            return
+        }
+        print(title.joined(separator: "; "))
+        nameLabel.text = title[0]
+        
+        
+        func updateSeasonAndQuality(_ info: [String]) {
+            if info.count > 1 {
+                seasonLabel.text = info[0]
+                seasonLabel.isHidden = false
+                qualityLabel.text = "  " + info[1] + "  "
+                qualityLabel.isHidden = false
+            } else {
+                seasonLabel.text = nil
+                qualityLabel.text = "  " + info[0] + "  "
+                qualityLabel.isHidden = false
+            }
+        }
+        
+        if title.count > 2 {
+            enNameLabel.text = title[1]
+            enNameLabel.isHidden = false
+            let info = title[2].components(separatedBy: ".")
+            updateSeasonAndQuality(info)
+        } else if title.count == 2 {
+            enNameLabel.text = nil
+            let info = title[1].components(separatedBy: ".")
+            updateSeasonAndQuality(info)
+        } else {
+            enNameLabel.text = nil
+            seasonLabel.text = nil
+        }
+        
+        progressView.progress = Double((fileInfo?.progress)!)
+        
+        posterImageView.af_setImage(withURL: URL(string: (fileInfo?.fileImage)!)!,
+                                    placeholderImage: UIImage(named: "poster-placeholder.png"),
+                                    imageTransition: .crossDissolve(0.2),
+                                    runImageTransitionIfCached: false)
+        
+        guard let downloadedFileSize = fileInfo?.downloadedFileSize, let fileSize = fileInfo?.fileSize else {
+            return
+        }
+        
+        let downSize = downloadedFileSize.unit == "GB" ? "%.2f" : "%.0f"
+        let size = fileSize.unit == "GB" ? "%.2f" : "%.0f"
+        progressLabel.text = String(format: "  \(downSize) %@ / \(size) %@  ", downloadedFileSize.size, downloadedFileSize.unit, fileSize.size, fileSize.unit)
+        
+        changeIcon()
+
     }
     
     override func awakeFromNib() {
