@@ -2,7 +2,6 @@ import UIKit
 import DGCollectionViewPaginableBehavior
 import AZSearchView
 import InteractiveSideMenu
-import GradientLoadingBar
 
 class ItemsCollectionViewController: ContentCollectionViewController, SideMenuItemContent {
     let model = Container.ViewModel.videoItems()
@@ -24,7 +23,6 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
     var searchController: AZSearchViewController!
     var searchControllerNew: UISearchController!
     
-    let gradientLoadingBar = GradientLoadingBar()
     var refreshing: Bool = false
 
     override func viewDidLoad() {
@@ -446,12 +444,10 @@ extension ItemsCollectionViewController: AZSearchViewDelegate {
     func searchView(_ searchView: AZSearchViewController, didTextChangeTo text: String, textLength: Int) {
         model.resultItems.removeAll()
         if textLength > 2 {
-            gradientLoadingBar.show()
             searchController.emptyResultCellText = "загрузка..."
             model.loadSearchItems(text, { [weak self] _ in
                 self?.searchController.emptyResultCellText = "Нет результатов поиска"
                 searchView.reloadData()
-                self?.gradientLoadingBar.hide()
             })
         }
         searchView.reloadData()
