@@ -1,6 +1,7 @@
 import UIKit
 import AlamofireImage
 import SwiftyUserDefaults
+import Kingfisher
 
 protocol ItemCollectionViewCellDelegate {
     func didPressDeleteButton(_ item: Item)
@@ -98,10 +99,13 @@ class ItemCollectionViewCell: UICollectionViewCell {
         }
 
         if let poster = item.posters?.medium {
-            posterImageView.af_setImage(withURL: URL(string: poster)!,
-                                             placeholderImage: UIImage(named: "poster-placeholder.png"),
-                                             imageTransition: .crossDissolve(0.2),
-                                             runImageTransitionIfCached: false)
+            posterImageView.kf.setImage(with: URL(string: poster)!,
+                                        placeholder: UIImage(named: "poster-placeholder.png"),
+                                        options: [.backgroundDecode])
+//            posterImageView.af_setImage(withURL: URL(string: poster)!,
+//                                             placeholderImage: UIImage(named: "poster-placeholder.png"),
+//                                             imageTransition: .crossDissolve(0.2),
+//                                             runImageTransitionIfCached: false)
         }
         
         if let newEpisode = item.new {

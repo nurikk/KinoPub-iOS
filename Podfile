@@ -39,6 +39,7 @@ target 'KinoPub' do
   pod 'R.swift'
   pod 'Mixpanel'
   pod 'SwiftyBeaver', :configurations => ['Debug']
+  pod 'Kingfisher'
 
 end
 
