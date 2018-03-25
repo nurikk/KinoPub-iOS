@@ -27,7 +27,7 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dZc-u4-YmA">
                         <rect key="frame" x="8" y="8" width="186" height="279"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="poster-placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="AUd-Lo-BvM">
+                            <imageView clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="poster-placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="AUd-Lo-BvM">
                                 <rect key="frame" x="0.0" y="0.0" width="186" height="279"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="AUd-Lo-BvM" secondAttribute="height" multiplier="1:1.5" id="5tX-Bc-EGU"/>

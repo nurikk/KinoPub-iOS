@@ -93,21 +93,12 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
             collectionView?.addSubview(control)
         }
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
+    private static let filtersFillImage = R.image.filtersFill()
+    private static let filtersImage = R.image.filters()
     override func viewWillLayoutSubviews() {
-        configFilterButton()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+        super.viewWillLayoutSubviews()
+        filterButton?.image = model.filter.isSet ? ItemsCollectionViewController.filtersFillImage : ItemsCollectionViewController.filtersImage
     }
 
     @objc func refresh() {
@@ -227,10 +218,6 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
         searchController.navigationItem.rightBarButtonItem = item
     }
     
-    func configFilterButton() {
-        filterButton?.image = model.filter.isSet ? UIImage(named: "Filters Fill") : UIImage(named: "Filters")
-    }
-    
     func configMenuIcon() {
         if let count = navigationController?.viewControllers.count, count > 1 {
             navigationItem.leftBarButtonItem = nil
@@ -341,14 +328,15 @@ extension ItemsCollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard indexPath.row < (searchControllerNew.isActive ? model.resultItems.count : model.videoItems.count) else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LoadingItemCollectionViewCell.reuseIdentifier, for: indexPath) as! LoadingItemCollectionViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: R.nib.loadingItemCollectionViewCell, for: indexPath)!
+            
             if !self.refreshing {
                 cell.set(moreToLoad: !self.behavior.sectionStatus(forSection: indexPath.section).done)
             }
             return cell
         }
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ItemCollectionViewCell.self), for: indexPath) as! ItemCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: R.nib.itemCollectionViewCell, for: indexPath)!
         cell.set(item: searchControllerNew.isActive ? model.resultItems[indexPath.row] : model.videoItems[indexPath.row])
         return cell
     }
@@ -395,7 +383,8 @@ extension ItemsCollectionViewController: DGCollectionViewPaginableBehaviorDelega
         }
         let width = (collectionView.bounds.width - (collectionView.contentInset.left + collectionView.contentInset.right)) / constant
         let height = width * 1.569
-        return CGSize(width: width, height: height)
+        let size = CGSize(width: width.floor, height: height.floor)
+        return size
     }
 
     func paginableBehavior(_ paginableBehavior: DGCollectionViewPaginableBehavior, countPerPageInSection section: Int) -> Int {
