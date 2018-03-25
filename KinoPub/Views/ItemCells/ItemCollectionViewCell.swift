@@ -101,10 +101,21 @@ class ItemCollectionViewCell: UICollectionViewCell {
 
         if Defaults[.showRatringInPoster] {
             ratingView.isHidden = false
-            kinopoiskRatingLabel.text = String(format: "%.1f", item.kinopoiskRating ?? 0)
-            imdbRatingLabel.text = item.imdbRating?.string ?? "0.0"
-            kinopubRatingLabel.text = item.rating?.string ?? "0"
+            
+            kinopubRatingLabel.text = string(rating: item.rating)
+            kinopoiskRatingLabel.text = string(rating: item.kinopoiskRating)
+            imdbRatingLabel.text = string(rating: item.imdbRating)
         }
+    }
+    
+    private func string(rating: Int?) -> String {
+        guard let rating = rating else { return "-" }
+        return String(rating)
+    }
+    
+    private func string(rating: Double?) -> String {
+        guard let rating = rating else { return "-" }
+        return String(format: "%.1f", rating)
     }
     
     func configure(with collection: Collections) {
