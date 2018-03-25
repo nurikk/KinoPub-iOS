@@ -1,6 +1,5 @@
 import UIKit
 import InteractiveSideMenu
-import GradientLoadingBar
 import AZSearchView
 
 class HomeViewController: UIViewController, SideMenuItemContent {
@@ -10,7 +9,6 @@ class HomeViewController: UIViewController, SideMenuItemContent {
     
     var searchController: AZSearchViewController!
     let control = UIRefreshControl()
-    let gradientLoadingBar = GradientLoadingBar()
     var storedOffsets = [Int: CGFloat]()
     
     @IBOutlet weak var tableView: UITableView!
@@ -98,7 +96,6 @@ class HomeViewController: UIViewController, SideMenuItemContent {
     }
     
     func initData() {
-        gradientLoadingBar.show()
         model.loadNewFilms()
         model.loadNewSeries()
         model.loadHotFilms()
@@ -332,12 +329,10 @@ extension HomeViewController: AZSearchViewDelegate {
     func searchView(_ searchView: AZSearchViewController, didTextChangeTo text: String, textLength: Int) {
         model.resultItems.removeAll()
         if textLength > 2 {
-            gradientLoadingBar.show()
             searchController.emptyResultCellText = "загрузка..."
             model.loadSearchItems(text, { [weak self] _ in
                 self?.searchController.emptyResultCellText = "Нет результатов поиска"
                 searchView.reloadData()
-                self?.gradientLoadingBar.hide()
             })
         }
         searchView.reloadData()
@@ -369,7 +364,6 @@ extension HomeViewController: AccountManagerDelegate {
 extension HomeViewController: VideoItemsModelDelegate {
     func didUpdateItems(model: VideoItemsModel) {
         tableView.reloadData()
-        gradientLoadingBar.hide()
     }
 }
 

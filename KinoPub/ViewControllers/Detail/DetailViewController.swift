@@ -4,7 +4,6 @@ import CustomLoader
 import AlamofireImage
 import TMDBSwift
 import LKAlertController
-import GradientLoadingBar
 import NTDownload
 import NotificationBannerSwift
 
@@ -24,8 +23,6 @@ class DetailViewController: UIViewController, SideMenuItemContent {
     var navigationBarHide = true
     var titleColor = UIColor.clear
     var storedOffsets = [Int: CGFloat]()
-    
-    let gradientLoadingBar = GradientLoadingBar()
     
     // MARK: Outlet properties
     @IBOutlet weak var posterImageView: UIImageView!
@@ -267,11 +264,9 @@ class DetailViewController: UIViewController, SideMenuItemContent {
     
     func beginLoad() {
         refreshing = true
-        gradientLoadingBar.show()
     }
     
     func endLoad() {
-        gradientLoadingBar.hide()
         refreshing = false
     }
     

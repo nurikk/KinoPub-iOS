@@ -2,7 +2,6 @@ import UIKit
 import DGCollectionViewPaginableBehavior
 import AZSearchView
 import InteractiveSideMenu
-import GradientLoadingBar
 
 class ItemsCollectionViewController: ContentCollectionViewController, SideMenuItemContent {
     let model = Container.ViewModel.videoItems()
@@ -24,7 +23,6 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
     var searchController: AZSearchViewController!
     var searchControllerNew: UISearchController!
     
-    let gradientLoadingBar = GradientLoadingBar()
     var refreshing: Bool = false
 
     override func viewDidLoad() {
@@ -79,6 +77,11 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
 
         collectionView?.delegate = behavior
         collectionView?.dataSource = self
+        
+        if #available(iOS 10.0, *) {
+            collectionView?.isPrefetchingEnabled = false
+        }
+        
         behavior.delegate = self
         collectionView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tap)))
         // Pull to refresh
@@ -90,21 +93,12 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
             collectionView?.addSubview(control)
         }
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
+    private static let filtersFillImage = R.image.filtersFill()
+    private static let filtersImage = R.image.filters()
     override func viewWillLayoutSubviews() {
-        configFilterButton()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+        super.viewWillLayoutSubviews()
+        filterButton?.image = model.filter.isSet ? ItemsCollectionViewController.filtersFillImage : ItemsCollectionViewController.filtersImage
     }
 
     @objc func refresh() {
@@ -224,10 +218,6 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
         searchController.navigationItem.rightBarButtonItem = item
     }
     
-    func configFilterButton() {
-        filterButton?.image = model.filter.isSet ? UIImage(named: "Filters Fill") : UIImage(named: "Filters")
-    }
-    
     func configMenuIcon() {
         if let count = navigationController?.viewControllers.count, count > 1 {
             navigationItem.leftBarButtonItem = nil
@@ -287,7 +277,7 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
         refresh()
         tabBarController?.tabBar.isHidden = false
     }
-
+    
     // MARK: - Navigation
     static func storyboardInstance() -> ItemsCollectionViewController? {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -326,34 +316,25 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
 
 // MARK: UICollectionViewDataSource
 extension ItemsCollectionViewController {
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
-    }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
         return (searchControllerNew.isActive ? model.resultItems.count : model.videoItems.count) + (self.behavior.sectionStatus(forSection: section).done ? 0 : 1)
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard indexPath.row < (searchControllerNew.isActive ? model.resultItems.count : model.videoItems.count) else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LoadingItemCollectionViewCell.reuseIdentifier, for: indexPath) as! LoadingItemCollectionViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: R.nib.loadingItemCollectionViewCell, for: indexPath)!
+            
             if !self.refreshing {
                 cell.set(moreToLoad: !self.behavior.sectionStatus(forSection: indexPath.section).done)
             }
             return cell
         }
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ItemCollectionViewCell.self), for: indexPath) as! ItemCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: R.nib.itemCollectionViewCell, for: indexPath)!
         cell.set(item: searchControllerNew.isActive ? model.resultItems[indexPath.row] : model.videoItems[indexPath.row])
         return cell
     }
-    
-//    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//         guard let _cell = cell as? ItemCollectionViewCell else { return }
-//        _cell.configBlur()
-//    }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var reusableView : UICollectionReusableView!
@@ -392,7 +373,8 @@ extension ItemsCollectionViewController: DGCollectionViewPaginableBehaviorDelega
         }
         let width = (collectionView.bounds.width - (collectionView.contentInset.left + collectionView.contentInset.right)) / constant
         let height = width * 1.569
-        return CGSize(width: width, height: height)
+        let size = CGSize(width: width.floor, height: height.floor)
+        return size
     }
 
     func paginableBehavior(_ paginableBehavior: DGCollectionViewPaginableBehavior, countPerPageInSection section: Int) -> Int {
@@ -446,12 +428,10 @@ extension ItemsCollectionViewController: AZSearchViewDelegate {
     func searchView(_ searchView: AZSearchViewController, didTextChangeTo text: String, textLength: Int) {
         model.resultItems.removeAll()
         if textLength > 2 {
-            gradientLoadingBar.show()
             searchController.emptyResultCellText = "загрузка..."
             model.loadSearchItems(text, { [weak self] _ in
                 self?.searchController.emptyResultCellText = "Нет результатов поиска"
                 searchView.reloadData()
-                self?.gradientLoadingBar.hide()
             })
         }
         searchView.reloadData()
@@ -517,6 +497,7 @@ extension ItemsCollectionViewController: AccountManagerDelegate {
 // MARK: VideoItemsModel Delegate
 extension ItemsCollectionViewController: VideoItemsModelDelegate {
     func didUpdateItems(model: VideoItemsModel) {
+        // Forces deinit cells.
         collectionView?.reloadData()
     }
 }

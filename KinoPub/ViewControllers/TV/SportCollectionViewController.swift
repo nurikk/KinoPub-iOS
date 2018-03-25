@@ -1,11 +1,9 @@
 import UIKit
 import InteractiveSideMenu
-import GradientLoadingBar
 
 class SportCollectionViewController: UICollectionViewController, SideMenuItemContent {
     private let model = Container.ViewModel.tv()
     private let mediaManager = Container.Manager.media
-    let gradientLoadingBar = GradientLoadingBar()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +19,6 @@ class SportCollectionViewController: UICollectionViewController, SideMenuItemCon
     
     func config() {
         model.delegate = self
-        gradientLoadingBar.show()
         model.loadSportChannels()
     }
     
@@ -113,7 +110,6 @@ extension SportCollectionViewController: UICollectionViewDelegateFlowLayout {
 extension SportCollectionViewController: TVModelDelegate {
     func didUpdateChannels(model: TVModel) {
         collectionView?.reloadData()
-        gradientLoadingBar.hide()
     }
 }
 

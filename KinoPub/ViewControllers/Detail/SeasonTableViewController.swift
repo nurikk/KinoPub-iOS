@@ -3,7 +3,6 @@ import SwiftyUserDefaults
 import LKAlertController
 import NTDownload
 import NotificationBannerSwift
-import GradientLoadingBar
 
 class SeasonTableViewController: UITableViewController {
     var model: VideoItemModel!
@@ -15,7 +14,6 @@ class SeasonTableViewController: UITableViewController {
     let control = UIRefreshControl()
     var refreshing: Bool = false
     var indexPathSeason: Int!
-    let gradientLoadingBar = GradientLoadingBar()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,14 +74,12 @@ class SeasonTableViewController: UITableViewController {
     
     func beginLoad() {
         refreshing = true
-        gradientLoadingBar.show()
     }
     
     @objc func endLoad() {
         tableView.reloadData()
         refreshing = false
         control.endRefreshing()
-        gradientLoadingBar.hide()
     }
 
     @IBAction func watchButtonTap(_ sender: UIBarButtonItem) {

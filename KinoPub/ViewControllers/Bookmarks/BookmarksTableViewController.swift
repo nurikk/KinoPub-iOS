@@ -2,13 +2,11 @@ import UIKit
 import CustomLoader
 import LKAlertController
 import InteractiveSideMenu
-import GradientLoadingBar
 
 class BookmarksTableViewController: UITableViewController, SideMenuItemContent {
     let viewModel = Container.ViewModel.bookmarks()
     
     let control = UIRefreshControl()
-    let gradientLoadingBar = GradientLoadingBar()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,12 +81,11 @@ class BookmarksTableViewController: UITableViewController, SideMenuItemContent {
     
     func beginLoad() {
 //        _ = LoadingView.system(withStyle: .white).show(inView: view)
-        gradientLoadingBar.show()
     }
     
     func endLoad() {
 //        view.removeLoadingViews(animated: true)
-        gradientLoadingBar.hide()
+        
     }
     
     func showNewFolderAlert() {

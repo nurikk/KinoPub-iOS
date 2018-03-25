@@ -32,14 +32,14 @@ target 'KinoPub' do
   pod 'Firebase/RemoteConfig'
   pod 'AZSearchView', :git => 'https://github.com/hintoz/AZSearchView.git'
   pod 'NDYoutubePlayer', :git => 'https://github.com/hintoz/NDYoutubePlayer.git'
-  pod 'GradientLoadingBar'
   pod 'EasyAbout'
   pod 'CircleProgressView'
   
   pod 'Reveal-SDK', :configurations => ['Debug']
   pod 'R.swift'
   pod 'Mixpanel'
-  pod 'SwiftyBeaver', :configurations => ['Debug']
+  pod 'SwiftyBeaver'
+  pod 'Kingfisher'
 
 end
 
