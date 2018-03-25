@@ -77,6 +77,11 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
 
         collectionView?.delegate = behavior
         collectionView?.dataSource = self
+        
+        if #available(iOS 10.0, *) {
+            collectionView?.isPrefetchingEnabled = false
+        }
+        
         behavior.delegate = self
         collectionView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tap)))
         // Pull to refresh
@@ -513,6 +518,7 @@ extension ItemsCollectionViewController: AccountManagerDelegate {
 // MARK: VideoItemsModel Delegate
 extension ItemsCollectionViewController: VideoItemsModelDelegate {
     func didUpdateItems(model: VideoItemsModel) {
+        // Forces deinit cells.
         collectionView?.reloadData()
     }
 }
