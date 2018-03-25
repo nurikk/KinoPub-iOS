@@ -49,17 +49,6 @@ class ItemCollectionViewCell: UICollectionViewCell {
     func configViews() {
         titleLabel.textColor = .kpOffWhite
         
-        kinopoiskRatingLabel.textColor = .kpOffWhite
-        imdbRatingLabel.textColor = .kpOffWhite
-        kinopubRatingLabel.textColor = .kpOffWhite
-        
-        kinopoiskImageView.image = kinopoiskImageView.image?.withRenderingMode(.alwaysTemplate)
-        kinopoiskImageView.tintColor = .kpOffWhite
-        imdbImageView.image = imdbImageView.image?.withRenderingMode(.alwaysTemplate)
-        imdbImageView.tintColor = .kpOffWhite
-        kinopubImageView.image = kinopubImageView.image?.withRenderingMode(.alwaysTemplate)
-        kinopubImageView.tintColor = .kpOffWhite
-        
         posterView.dropShadow(color: UIColor.black, opacity: 0.3, offSet: CGSize(width: 0, height: 2), radius: 6, scale: true)
         posterView.addObserver(self, forKeyPath: #keyPath(UIView.bounds), options: .new, context: nil)
         
@@ -76,18 +65,19 @@ class ItemCollectionViewCell: UICollectionViewCell {
     func configBlur() {
         if !UIAccessibilityIsReduceTransparencyEnabled() {
             ratingView.backgroundColor = .clear
-            
+
             let blurEffect = UIBlurEffect(style: .dark)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             blurEffectView.frame = self.ratingView.bounds
             blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            
+
             ratingView.insertSubview(blurEffectView, at: 0)
         } else {
             ratingView.backgroundColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.80)
         }
     }
 
+    private static let posterPlaceholderImage = R.image.posterPlaceholder()
     func set(item: Item) {
         self.item = item
         editBookmarkView.isHidden = true
@@ -98,21 +88,17 @@ class ItemCollectionViewCell: UICollectionViewCell {
 //            enTitleLabel.text = title.count > 1 ? title[1] : ""
         }
 
-        if let poster = item.posters?.medium {
-            posterImageView.kf.setImage(with: URL(string: poster)!,
-                                        placeholder: UIImage(named: "poster-placeholder.png"),
+        if let poster = item.posters?.medium, let url = URL(string: poster) {
+            posterImageView.kf.setImage(with: url,
+                                        placeholder: ItemCollectionViewCell.posterPlaceholderImage,
                                         options: [.backgroundDecode])
-//            posterImageView.af_setImage(withURL: URL(string: poster)!,
-//                                             placeholderImage: UIImage(named: "poster-placeholder.png"),
-//                                             imageTransition: .crossDissolve(0.2),
-//                                             runImageTransitionIfCached: false)
         }
         
         if let newEpisode = item.new {
             newEpisodeView.isHidden = false
             newEpisodeLabel.text = String(newEpisode)
         }
-        
+
         if Defaults[.showRatringInPoster] {
             ratingView.isHidden = false
             kinopoiskRatingLabel.text = String(format: "%.1f", item.kinopoiskRating ?? 0)
@@ -128,12 +114,11 @@ class ItemCollectionViewCell: UICollectionViewCell {
         if let title = collection.title {
             titleLabel.text = title
         }
-        
-        if let poster = collection.posters?.medium {
-            posterImageView.af_setImage(withURL: URL(string: poster)!,
-                                        placeholderImage: UIImage(named: "poster-placeholder.png"),
-                                        imageTransition: .crossDissolve(0.2),
-                                        runImageTransitionIfCached: false)
+
+        if let poster = collection.posters?.medium, let url = URL(string: poster) {
+            posterImageView.kf.setImage(with: url,
+                                        placeholder: ItemCollectionViewCell.posterPlaceholderImage,
+                                        options: [.backgroundDecode])
         }
     }
     
