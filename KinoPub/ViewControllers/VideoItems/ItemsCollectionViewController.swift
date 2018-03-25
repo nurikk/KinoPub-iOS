@@ -277,7 +277,7 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
         refresh()
         tabBarController?.tabBar.isHidden = false
     }
-
+    
     // MARK: - Navigation
     static func storyboardInstance() -> ItemsCollectionViewController? {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -316,13 +316,8 @@ class ItemsCollectionViewController: ContentCollectionViewController, SideMenuIt
 
 // MARK: UICollectionViewDataSource
 extension ItemsCollectionViewController {
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
-    }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
         return (searchControllerNew.isActive ? model.resultItems.count : model.videoItems.count) + (self.behavior.sectionStatus(forSection: section).done ? 0 : 1)
     }
     
@@ -340,11 +335,6 @@ extension ItemsCollectionViewController {
         cell.set(item: searchControllerNew.isActive ? model.resultItems[indexPath.row] : model.videoItems[indexPath.row])
         return cell
     }
-    
-//    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//         guard let _cell = cell as? ItemCollectionViewCell else { return }
-//        _cell.configBlur()
-//    }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var reusableView : UICollectionReusableView!

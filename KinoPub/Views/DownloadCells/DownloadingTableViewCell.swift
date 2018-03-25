@@ -29,7 +29,6 @@ class DownloadingTableViewCell: UITableViewCell {
             qualityLabel = nil
             return
         }
-        print(title.joined(separator: "; "))
         nameLabel.text = title[0]
         
         
